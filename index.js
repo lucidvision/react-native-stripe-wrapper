@@ -8,30 +8,25 @@ var superagent = require('superagent');
 var base64 = require('base-64');
 var utf8 = require('utf8');
 
-
-module.exports = function (stripe_url, secret_key) {
+module.exports = function (publishable_key) {
     var module = {};
-
-
-
-
-    module.createCardToken = function (cardNumber , expMonth ,expYear , cvc , callback ) {
-      
-           
-        var bytes = utf8.encode(secret_key+':');
+    module.tokens = {};
+    module.tokens.create = function (options, callback ) {
+     
+        var card = options.card
+        var bytes = utf8.encode(publishable_key+':');
         var encodedSecretKey = base64.encode(bytes); 
 
          try {
-
                     superagent
                     .post(stripe_url+'tokens')
                     .set('Accept', '*/*')
                     .set('Content-Type', 'application/x-www-form-urlencoded')
                     .set('Authorization', 'Basic '+encodedSecretKey)
-                    .send('card'+'[number]='+cardNumber)
-                    .send('card'+'[exp_month]='+expMonth)
-                    .send('card'+'[exp_year]='+expYear)
-                    .send('card'+'[cvc]='+cvc)
+                    .send('card'+'[number]='+card.number)
+                    .send('card'+'[exp_month]='+card.exp_month)
+                    .send('card'+'[exp_year]='+card.exp_year)
+                    .send('card'+'[cvc]='+card.cvc)
                     .end(function(err, res){
 
                                 if (err) {
@@ -57,26 +52,18 @@ module.exports = function (stripe_url, secret_key) {
                                             ok: true,
                                             body: JSON.parse(res.text)
                                      }
- 
                                 }
-                                
+                               
                                 console.log('response ',res.text);                               
                                 callback && callback(res);
-
                       }
                      );  
-
          } catch (e) {
             var error = {ok: false, unauthorized: false, exception: e};
             console.log('error ',error );  
             callback && callback(error);
-        } 
-
-             
+        }          
     };
-
-   
-
     return module;
 };
 

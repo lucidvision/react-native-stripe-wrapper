@@ -1,8 +1,17 @@
 ## Stripe API Wrapper
-Stripe API wrapper  for react native and a credit card information form generated with tcomb-form-native.
+Stripe API wrapper that can create card tokens
 
-## Set up
+```javascript
+var stripe = require('react-native-stripe-wrapper')('sk_test_sdf3fmveovm3');
 
-- npm install 
-- Modify stripeConfig.js to use your configuration to get access to Stripe API.
+stripe.tokens.create({
+    card: {
+        number: '424242424242',
+        exp_month: 12,
+        exp_year: 2018,
+        cvc: 213
+    }
+  }, function(err, token) {
+});
+```
 
