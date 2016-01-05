@@ -19,7 +19,7 @@ module.exports = function (publishable_key) {
 
          try {
                     superagent
-                    .post(stripe_url+'tokens')
+                    .post('https://api.stripe.com/v1/'+'tokens')
                     .set('Accept', '*/*')
                     .set('Content-Type', 'application/x-www-form-urlencoded')
                     .set('Authorization', 'Basic '+encodedSecretKey)
@@ -28,34 +28,30 @@ module.exports = function (publishable_key) {
                     .send('card'+'[exp_year]='+card.exp_year)
                     .send('card'+'[cvc]='+card.cvc)
                     .end(function(err, res){
-
-                                if (err) {
-                                    if (! error.response) {
-                                        res = {
-                                            ok: false,
-                                            body: { errors: { default: 'Server connection error' }}
-                                        }
-                                    } else {
-                                        res = error.response;
-                                       
-                                    }
-                                } else if(!res.ok){
-
-                                     res = {
-                                            ok: false,
-                                            body: JSON.parse(res.text)
-                                     }
-
-                                }else{
-
-                                    res = {
-                                            ok: true,
-                                            body: JSON.parse(res.text)
-                                     }
-                                }
-                               
-                                console.log('response ',res.text);                               
-                                callback && callback(res);
+                        if (err) {
+                          if (! error.response) {
+                              res = {
+                                  ok: false,
+                                  body: { errors: { default: 'Server connection error' }}
+                              }
+                          } else {
+                              res = error.response;
+                              
+                          }
+                        } else if(!res.ok){
+                          res = {
+                                ok: false,
+                                body: JSON.parse(res.text)
+                          }
+                        } else{
+                          res = {
+                                  ok: true,
+                                  body: JSON.parse(res.text)
+                            }
+                        }
+                        
+                        console.log('response ', res.body);                               
+                        callback && callback(null, res.body);
                       }
                      );  
          } catch (e) {
