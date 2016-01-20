@@ -1,64 +1,43 @@
-/**
- * Created by Gabriel on 15-07-15.
- **/
-
 "use strict";
 
-var superagent = require('superagent');
-var base64 = require('base-64');
-var utf8 = require('utf8');
+var fetch = fetch || require('node-fetch');    
+var stripe_url = 'https://api.stripe.com/v1/'
 
 module.exports = function (publishable_key) {
     var module = {};
     module.tokens = {};
-    module.tokens.create = function (options, callback ) {
-     
-        var card = options.card
-        var bytes = utf8.encode(publishable_key+':');
-        var encodedSecretKey = base64.encode(bytes); 
+    module.tokens.create = function (options, callback) {
+        var cardDetails = {
+            "card[number]": options.card.number,
+            "card[exp_month]": options.card.exp_month,
+            "card[exp_year]": options.card.exp_year,
+            "card[cvc]": options.card.cvc
+        };
 
-         try {
-                    superagent
-                    .post('https://api.stripe.com/v1/'+'tokens')
-                    .set('Accept', '*/*')
-                    .set('Content-Type', 'application/x-www-form-urlencoded')
-                    .set('Authorization', 'Basic '+encodedSecretKey)
-                    .send('card'+'[number]='+card.number)
-                    .send('card'+'[exp_month]='+card.exp_month)
-                    .send('card'+'[exp_year]='+card.exp_year)
-                    .send('card'+'[cvc]='+card.cvc)
-                    .end(function(err, res){
-                        if (err) {
-                          if (! error.response) {
-                              res = {
-                                  ok: false,
-                                  body: { errors: { default: 'Server connection error' }}
-                              }
-                          } else {
-                              res = error.response;
-                              
-                          }
-                        } else if(!res.ok){
-                          res = {
-                                ok: false,
-                                body: JSON.parse(res.text)
-                          }
-                        } else{
-                          res = {
-                                  ok: true,
-                                  body: JSON.parse(res.text)
-                            }
-                        }
-                        
-                        console.log('response ', res.body);                               
-                        callback && callback(null, res.body);
-                      }
-                     );  
-         } catch (e) {
-            var error = {ok: false, unauthorized: false, exception: e};
-            console.log('error ',error );  
-            callback && callback(error);
-        }          
+        var formBody = [];
+        for (var property in cardDetails) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(cardDetails[property]);
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+        formBody = formBody.join("&");
+
+        fetch(stripe_url + 'tokens', {
+            method: 'post',
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Bearer ' + publishable_key
+            },
+            body: formBody
+        }).then(function(response) {
+            return response.text()
+        }).then(function(body) {
+            console.log(body)
+            callback(null, JSON.parse(body))
+        }).catch(function(err) {
+            callback(err)
+        })
     };
     return module;
 };
