@@ -3,7 +3,7 @@
   "version": "0.0.3",
   "private": true,
   "scripts": {
-    "start": "node_modules/react-native/packager/packager.sh",
+    "start": "",
     "test": "mocha"
   },
   "dependencies": {

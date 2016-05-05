@@ -1,12 +1,14 @@
 "use strict";
 
-var fetch = fetch || require('node-fetch');    
+if (!global.fetch)
+    global.fetch = require('node-fetch')
+    
 var stripe_url = 'https://api.stripe.com/v1/'
 
 module.exports = function (publishable_key) {
-    var module = {};
-    module.tokens = {};
-    module.tokens.create = function (options, callback) {
+    var stripe = {};
+    stripe.tokens = {};
+    stripe.tokens.create = function (options, callback) {
         var cardDetails = {
             "card[number]": options.card.number,
             "card[exp_month]": options.card.exp_month,
@@ -38,13 +40,6 @@ module.exports = function (publishable_key) {
         }).catch(function(err) {
             callback(err)
         })
-    };
-    return module;
-};
-
-
-
-
-
-
-
+    }
+    return stripe
+}
