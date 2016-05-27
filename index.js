@@ -35,8 +35,12 @@ module.exports = function (publishable_key) {
         }).then(function(response) {
             return response.text()
         }).then(function(body) {
-            console.log(body)
-            callback(null, JSON.parse(body))
+            var body = JSON.parse(body)
+            if (body.error) {
+                callback(body.error, null)
+            } else {
+                callback(null, JSON.parse(body))
+            }
         }).catch(function(err) {
             callback(err)
         })
