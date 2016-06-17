@@ -33,13 +33,12 @@ module.exports = function (publishable_key) {
             },
             body: formBody
         }).then(function(response) {
-            return response.text()
+            return response.json()
         }).then(function(body) {
-            var body = JSON.parse(body)
             if (body.error) {
                 callback(body.error, null)
             } else {
-                callback(null, JSON.parse(body))
+                callback(null, body)
             }
         }).catch(function(err) {
             callback(err)
