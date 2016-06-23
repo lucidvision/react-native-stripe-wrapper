@@ -52,12 +52,12 @@ module.exports = function (publishable_key) {
     stripe.bankAccount = {}
     stripe.bankAccount.createToken = function(options, callback) {
         var bankAccountDetails = {
-            'bank_account[country]': options.country,
-            'bank_account[currency]': options.currency,
-            'bank_account[account_holder_name]': options.account_holder_name,
-            'bank_account[account_holder_type]': options.account_holder_type,
-            'bank_account[routing_number]': options.routing_number,
-            'bank_account[account_number]': options.account_number
+            'bank_account[country]': options.bank_account.country,
+            'bank_account[currency]': options.bank_account.currency,
+            'bank_account[account_holder_name]': options.bank_account.account_holder_name,
+            'bank_account[account_holder_type]': options.bank_account.account_holder_type,
+            'bank_account[routing_number]': options.bank_account.routing_number,
+            'bank_account[account_number]': options.bank_account.account_holder_namenumber
         }
         performRequest('/tokens', bankAccountDetails, callback)
     }
