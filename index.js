@@ -57,7 +57,7 @@ module.exports = function (publishable_key) {
                 'bank_account[account_holder_name]': options.bank_account.account_holder_name,
                 'bank_account[account_holder_type]': options.bank_account.account_holder_type,
                 'bank_account[routing_number]': options.bank_account.routing_number,
-                'bank_account[account_number]': options.bank_account.account_holder_namenumber
+                'bank_account[account_number]': options.bank_account.account_number
             }
         }
         performRequest('/tokens', params, callback)
