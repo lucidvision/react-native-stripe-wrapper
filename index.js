@@ -41,25 +41,26 @@ module.exports = function (publishable_key) {
     var stripe = {}
     stripe.tokens = {}
     stripe.tokens.create = function (options, callback) {
-        var cardDetails = {
-            'card[number]': options.card.number,
-            'card[exp_month]': options.card.exp_month,
-            'card[exp_year]': options.card.exp_year,
-            'card[cvc]': options.card.cvc
+        var params
+        if (options.card) {
+            params = {
+                'card[number]': options.card.number,
+                'card[exp_month]': options.card.exp_month,
+                'card[exp_year]': options.card.exp_year,
+                'card[cvc]': options.card.cvc
+            }
         }
-        performRequest('/tokens', cardDetails, callback)
-    }
-    stripe.bankAccount = {}
-    stripe.bankAccount.createToken = function(options, callback) {
-        var bankAccountDetails = {
-            'bank_account[country]': options.bank_account.country,
-            'bank_account[currency]': options.bank_account.currency,
-            'bank_account[account_holder_name]': options.bank_account.account_holder_name,
-            'bank_account[account_holder_type]': options.bank_account.account_holder_type,
-            'bank_account[routing_number]': options.bank_account.routing_number,
-            'bank_account[account_number]': options.bank_account.account_holder_namenumber
+        if (options.bank_account) {
+            params = {
+                'bank_account[country]': options.bank_account.country,
+                'bank_account[currency]': options.bank_account.currency,
+                'bank_account[account_holder_name]': options.bank_account.account_holder_name,
+                'bank_account[account_holder_type]': options.bank_account.account_holder_type,
+                'bank_account[routing_number]': options.bank_account.routing_number,
+                'bank_account[account_number]': options.bank_account.account_holder_namenumber
+            }
         }
-        performRequest('/tokens', bankAccountDetails, callback)
+        performRequest('/tokens', params, callback)
     }
     return stripe
 }
