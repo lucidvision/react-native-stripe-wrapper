@@ -1,8 +1,6 @@
 'use strict';
 
-if (!global.fetch)
-    global.fetch = require('node-fetch')
-    
+var fetch = require('isomorphic-fetch')    
 var stripe_url = 'https://api.stripe.com/v1'
 
 module.exports = function (publishable_key) {
